@@ -94,14 +94,14 @@ data_iso2[data_iso2$country=="MX",]$country = "Mexico"
 data_iso2[data_iso2$country=="US",]$country = "United States"
 
 data_iso2 = data_iso2[
-  ,c("country","iso2","year","month","n_users_bert05_total",
+  ,c("country","year","month","n_users_bert05_total",#"iso2",
      paste0(labels_n_users, "_bert05_total"), 
      paste0(labels_n_users, "_bert05_gender_male"), 
      paste0(labels_n_users, "_bert05_gender_female"))
-  ] %>% arrange(iso2,year,month)
+  ] %>% arrange(country,year,month)
 
 colnames(data_iso2) = c(
-  "country","iso2","year","month","n_users",
+  "country","year","month","n_users",#"iso2",
   paste0("pct_",labels),
   paste0("pct_",labels,"_male"),
   paste0("pct_",labels,"_female"))
@@ -192,14 +192,14 @@ for (m in models) {
 
 data_city = data_city[
   data_city$metro_area_name %in% list_top3,
-  c("country","iso2","metro_area_name","year","month","n_users_bert05_total",
+  c("country","metro_area_name","year","month","n_users_bert05_total",#"iso2",
     paste0(labels_n_users, "_bert05_total"),
     paste0(labels_n_users, "_bert05_gender_male"), 
     paste0(labels_n_users, "_bert05_gender_female"))
-  ] %>% arrange(iso2,metro_area_name,year,month)
+  ] %>% arrange(country,metro_area_name,year,month)
 
 colnames(data_city) = c(
-  "country","iso2","metro_area_name","year","month","n_users",
+  "country","metro_area_name","year","month","n_users",#"iso2",
   paste0("pct_",labels),
   paste0("pct_",labels,"_male"),
   paste0("pct_",labels,"_female"))
