@@ -7,11 +7,11 @@ This folder contains:
 # Monthly twitter-based indicators
 
 Indicators are available for three countries: Brazil (`BR`), Mexico (`MX`), and United States (`US`):
-- `./indicator/twitter_country.csv` contains Twitter indicators at the country-level. 
-- `./indicator/twitter_city.csv` contains Twitter indicators at the top five cities for each country sorted by the total number of Twitter users. 
+- `./indicator/twitter_country.csv` contains indicators at the country-level. 
+- `./indicator/twitter_city.csv` contains indicators at the top five cities for each country based on the total number of Twitter users. 
 
 Each file contains the following variables: 
-- `n_users_total` is the total number of twitter users observed each month.
+- `n_users_total` is the total number of Twitter users observed each month.
 - Various types of Twitter indices named `(1)_(2)_(3)`
 - `(1)` stands for the five different labels related to the user's unemployment status.
 - `(2)` stands for the classification model used to count the Twitter labels. We consider three approaches: 
