@@ -26,9 +26,9 @@ clist = c("MX", "BR", "US")
 # List of twitter models 
 
 models = c(
-  "keywords", # Keyword-based model 
-  "bert05", # BERT cutoff prob 0.5 model
-  "bert09" # BERT cutoff prob 0.9 model
+  # "keywords", # Keyword-based model 
+  "bert05" # , # BERT cutoff prob 0.5 model
+  # "bert09" # BERT cutoff prob 0.9 model
 )
 
 # List of different splits of the Twitter users
@@ -88,33 +88,27 @@ for (iso2 in clist) {
 }
 data_iso2$X = NULL
 
-var_name = c()
-
-for (m in models) {
-  for (s in 1:length(splits)) {
-    for (var in labels) {
-      
-      tmp_var = paste0(var, "_", m, "_", splits[s])
-      
-      if (split_name[s]=="total") {
-        var_name = c(var_name, tmp_var)
-      } else {
-        var_name = c(var_name, paste0(
-          paste0(tmp_var, "_"), groups[[s]])
-          )
-      }
-    }
-  }
-}
+data_iso2$country = data_iso2$iso2
+data_iso2[data_iso2$country=="BR",]$country = "Brazil"
+data_iso2[data_iso2$country=="MX",]$country = "Mexico"
+data_iso2[data_iso2$country=="US",]$country = "United States"
 
 data_iso2 = data_iso2[
-  ,c("iso2","year","month","n_users_keywords_total",var_name)
+  ,c("country","iso2","year","month","n_users_bert05_total",
+     paste0(labels_n_users, "_bert05_total"), 
+     paste0(labels_n_users, "_bert05_gender_male"), 
+     paste0(labels_n_users, "_bert05_gender_female"))
   ] %>% arrange(iso2,year,month)
-colnames(data_iso2) = c("iso2","year","month",
-                        "n_users_total",var_name)
+
+colnames(data_iso2) = c(
+  "country","iso2","year","month","n_users",
+  paste0("pct_",labels),
+  paste0("pct_",labels,"_male"),
+  paste0("pct_",labels,"_female"))
 
 write.csv(data_iso2, 
-          file = paste0("../indicator/twitter_country", ".csv"), row.names = FALSE)
+          file = paste0("../indicator/twitter_country", ".csv"), 
+          row.names = FALSE)
 
 #####################################################
 
@@ -150,6 +144,11 @@ for (iso2 in clist) {
 }
 data_city$X = NULL
 
+data_city$country = data_city$iso2
+data_city[data_city$country=="BR",]$country = "Brazil"
+data_city[data_city$country=="MX",]$country = "Mexico"
+data_city[data_city$country=="US",]$country = "United States"
+
 # Total n_users by city
 
 names_city_n_users = c(
@@ -162,21 +161,21 @@ city_n_users = data_city[which(!is.na(data_city$unrate)),
   summarise_all(sum, na.rm = TRUE) %>% 
   arrange(desc(n_users_keywords_total)) %>% as.data.frame()
 
-# List of Top 5 cities sorted by n_users
+# List of Top 3 cities sorted by n_users
 
-list_top5 = c()
+list_top3 = c()
 
 for (iso2 in clist) {
   
   tmp_city_n_users = city_n_users[city_n_users$iso2==iso2,]
-  list_top5 = c(list_top5, tmp_city_n_users[c(1:5),"metro_area_name"])
+  list_top3 = c(list_top3, tmp_city_n_users[c(1:3),"metro_area_name"])
 }
 
 var_name = c()
 
 for (m in models) {
   for (s in 1:length(splits)) {
-    for (var in labels) {
+    for (var in labels_n_users) {
       
       tmp_var = paste0(var, "_", m, "_", splits[s])
       
@@ -192,13 +191,20 @@ for (m in models) {
 }
 
 data_city = data_city[
-  data_city$metro_area_name %in% list_top5,
-  c("iso2","metro_area_name","year","month","n_users_keywords_total",var_name)
+  data_city$metro_area_name %in% list_top3,
+  c("country","iso2","metro_area_name","year","month","n_users_bert05_total",
+    paste0(labels_n_users, "_bert05_total"),
+    paste0(labels_n_users, "_bert05_gender_male"), 
+    paste0(labels_n_users, "_bert05_gender_female"))
   ] %>% arrange(iso2,metro_area_name,year,month)
 
-colnames(data_city) = c("iso2","metro_area_name","year","month",
-                        "n_users_total",var_name)
+colnames(data_city) = c(
+  "country","iso2","metro_area_name","year","month","n_users",
+  paste0("pct_",labels),
+  paste0("pct_",labels,"_male"),
+  paste0("pct_",labels,"_female"))
 
 write.csv(data_city, 
-          file = paste0("../indicator/twitter_city", ".csv"), row.names = FALSE)
+          file = paste0("../indicator/twitter_city", ".csv"), 
+          row.names = FALSE)
 
